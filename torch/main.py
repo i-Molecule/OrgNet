@@ -19,6 +19,12 @@ if __name__ == "__main__":
         help="Device to run the inference on (`cpu` or `cuda`)",
         default="cpu",
     )
+    parser.add_argument(
+        "--trained_on",
+        choices=["Q3214", "S2648_V"],
+        help="Weights for OrgNet trained on (`Q3214` or `S2648_V`)",
+        default="S2648_V",
+    )
 
     args = parser.parse_args()
 
@@ -28,7 +34,7 @@ if __name__ == "__main__":
         assert args.save_to.endswith(".csv"), "save_to should be a .csv file"
 
     RMSE_, pearsonr_, mae_ = call_predict(
-        args.path_to_X, args.path_to_y, save_to=args.save_to, device=args.device
+        args.path_to_X, args.path_to_y, save_to=args.save_to, device=args.device, training_data=args.trained_on
     )
     print("  r  | RMSE | MAE")
     print(

@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from data.vox_dataset import VoxDataset, load_voxels
 from models.orgnet import OrgNet
-from utils.helpers import get_predictions, metric_by_name
+from utils.helpers import get_predictions, metric_by_name, seeds
 
 
 def call_predict(
@@ -15,8 +15,10 @@ def call_predict(
     path_to_y: Union[str, os.PathLike],
     save_to: Union[str, os.PathLike] | None = None,
     device: Literal["cuda", "cpu"] = "cpu",
-    SEED=1213,
-):
+    training_data: Literal["Q3214", "S2648_V"] = "S2648_V"
+):  
+    SEED = seeds[training_data]
+
     np.random.seed(SEED)
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
@@ -51,15 +53,10 @@ def call_predict(
 
     fold_predicts = []
 
-    for k, path_to_kth_model in enumerate(
-        [
-            osp.join("models", "weights", "orgnet", "d6c5b74e_0.pt"),
-            osp.join("models", "weights", "orgnet", "d6c5b74e_1.pt"),
-            osp.join("models", "weights", "orgnet", "d6c5b74e_2.pt"),
-            osp.join("models", "weights", "orgnet", "d6c5b74e_3.pt"),
-            osp.join("models", "weights", "orgnet", "d6c5b74e_4.pt"),
-        ]
-    ):
+
+    paths_to_kth_model = [osp.join("models", "weights", "orgnet", training_data, f"{k}.pt") for k in range(5)]
+
+    for k, path_to_kth_model in enumerate(paths_to_kth_model):
         net = OrgNet()
         net.to(device)
         net.load_state_dict(torch.load(path_to_kth_model, map_location=device))

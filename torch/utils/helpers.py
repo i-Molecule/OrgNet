@@ -3,6 +3,8 @@ import pandas as pd
 import torch
 import torchmetrics
 
+seeds = {"S2648_V": 1213, "Q3214": 1527}
+
 
 def predict_step(data, device, net):
     input, mol_id = data
