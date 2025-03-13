@@ -9,7 +9,7 @@
 Run the `install.sh` script to create the `orgnet` environment within `$CONDA_BASE/envs/`:
 
 ```bash
-cd .../orgnet_inference/
+cd .../OrgNet/torch/
 bash -l install.sh
 ```
 
