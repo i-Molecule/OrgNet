@@ -33,7 +33,7 @@ The above command will create a conda environment and install all dependencies s
 
 ## Mutant structures generation
 
-To generate mutant structures use run_rosetta_relax function in /Dataset_processing/Dataset_processing.ipynb. 
+To generate mutant structures use run_rosetta_relax function in Dataset_processing.ipynb. 
 
 Parameters:
     - pdb_id (str): PDB identifier.
