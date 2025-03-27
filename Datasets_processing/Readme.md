@@ -2,7 +2,7 @@
 
 This repository contains Jupyter Notebooks for dataset processing, for Thermonet-like models. The notebook that contains full dataset proicessing pipeline:
 
-- **Dataset_processing.ipynb:** Prepares the dataset (generates mutants, performs standardized orientation and calculates features for OrgNet and Thermonet-like models) for model training.
+- **Dataset_processing.ipynb:** Prepares the dataset (generates mutants, performs standardized orientation and calculates features for OrgNet and Thermonet-like models) for model training. Use .csv files in /datasets/ as as init_df in this notebook. 
 
 
 ## Prerequisites
@@ -31,7 +31,12 @@ conda env create --name ds_processing --file Thermonet_like.yaml
 ```
 The above command will create a conda environment and install all dependencies so that one can run scripts to make input tensors.
 
+## OrgNet datasets
+
+OrgNet dataset .csv files for Ssym, Q1744, Q3214, S669 and S2648 are located in /datasets/ folder. They can be used to create voxel datasets using Dataset_processing.ipynb.
+
 ## Mutant structures generation
+
 
 To generate mutant structures use run_rosetta_relax function in Dataset_processing.ipynb. 
 
@@ -47,13 +52,13 @@ Parameters:
 
  ## Voxels calculation
  
-To calculate voxels using HTMD library we have used two different scripts, Thermonet_like_default.py and Thermonet_like_modified.py. The first script Thermonet_like_default.py is used to calculate features for reproduced Thermonet models, while Thermonet_like_modified.py is used to calculate features for OrgNet models. Thermonet_like_modified.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
+To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models, while calculate_features_for_orgnet.py is used to calculate features for OrgNet models. Tcalculate_features_for_orgnetd.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
 
 Both of them are designed to generate voxel-based feature datasets from two protein structure files — one corresponding to the wildtype protein and the other to its mutant version. 
 
 Example usage:
 ```bash
-python script_name.py -iwt path/to/wildtype.pdb -imut path/to/mutant.pdb -o path/to/save/output --boxsize --voxelsize -v
+python calculate_features_for_thermonet.py -iwt path/to/wildtype.pdb -imut path/to/mutant.pdb -o path/to/save/output --boxsize --voxelsize -v
 ```
 
 - **-iwt/--input_wildtype_protein: Path to the wildtype PDB file.
@@ -70,8 +75,8 @@ python script_name.py -iwt path/to/wildtype.pdb -imut path/to/mutant.pdb -o path
 
 Note, that:
 
-- **1) output directory should contain several directories with following suffixes "_def_direct", "_defdif_direct", "_dif_direct", "_defdif_reverse", "_def_reverse", "_dif_reverse"
-- **2) The script parses the mutant file name for wild-type residue, position, mutation, so it should include this information.   
+- **1) output directory should contain several directories with your dataset name and following suffixes "_def_direct", "_defdif_direct", "_dif_direct", "_defdif_reverse", "_def_reverse", "_dif_reverse" and the "--path_to_save" should have your dataset name as a prefix "datasetname_" 
+- **2) The script parses the mutant file name for wild-type residue, position, mutation, so the input mutant pdb filename should include this information.   
 
 
 In the output creates several feature combinations:
