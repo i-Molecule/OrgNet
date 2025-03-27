@@ -1,4 +1,4 @@
-# Dataset processing and Thermonet-like models training
+# Dataset processing
 
 This repository contains Jupyter Notebooks for dataset processing, for Thermonet-like models. The notebook that contains full dataset proicessing pipeline:
 
