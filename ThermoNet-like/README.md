@@ -6,8 +6,8 @@
 You can create an environment from .yml file:
 
 ```bash
-conda env create -f conf.yml
-conda activate thermonet_tf
+conda env create -file conf.yml --name tf_preprocessing
+conda activate tf_preprocessing
 ```
 
 All required packages and versions can be found in requirements.txt file.

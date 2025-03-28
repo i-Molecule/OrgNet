@@ -1,4 +1,4 @@
-name: tf
+name: tf_preprocessing
 channels:
   - acellera
   - conda-forge
@@ -464,4 +464,3 @@ dependencies:
       - widgetsnbextension==4.0.11
       - wrapt==1.14.1
       - xlrd==2.0.1
-prefix: /home/nata/anaconda3/envs/tf

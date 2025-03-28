@@ -27,7 +27,7 @@ Full python packages and their version can be found in requirements.txt
 ### Install HTMD - the main library for voxels calculation
 The free version of HTMD is free to non-commercial users although it does not come with full functionality. But to use it with ThermoNet, the free version is sufficient. You can either install it by following the instructions listed [here](https://software.acellera.com/install-htmd.html), or by running
 ```bash
-conda env create --name ds_processing --file datasets_processing.yml
+conda env create --file datasets_processing.yml --name tf_preprocessing
 ```
 The above command will create a conda environment and install all dependencies so that one can run scripts to make input tensors.
 

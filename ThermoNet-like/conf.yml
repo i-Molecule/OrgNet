@@ -1,4 +1,4 @@
-name: tf
+name: tf_preprocessing
 channels:
   - acellera
   - conda-forge
@@ -460,4 +460,3 @@ dependencies:
       - werkzeug==3.0.0
       - widgetsnbextension==4.0.11
       - wrapt==1.14.1
-prefix: ./anaconda3/envs/thermonet_tf
