@@ -460,4 +460,4 @@ dependencies:
       - werkzeug==3.0.0
       - widgetsnbextension==4.0.11
       - wrapt==1.14.1
-prefix: /home/ilya/anaconda3/envs/OrgNet_conf
+prefix: ./anaconda3/envs/thermonet_tf

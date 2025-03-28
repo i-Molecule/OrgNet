@@ -556,7 +556,7 @@ if __name__ == "__main__":
 
 
     # parse arguments
-    PARSER = argparse.ArgumentParser(description="Training script for OrgNet.")
+    PARSER = argparse.ArgumentParser(description="Training script.")
     
     PARSER.add_argument("-evdirect", "--input_direct", help="Path to calculated direct features.", required=True, type=pathlib.Path)
     PARSER.add_argument("-evreverse", "--input_reverse", help="Path to calculated reverse features.", required=True, type=pathlib.Path)

@@ -1,6 +1,6 @@
 # Dataset processing
 
-This repository contains Jupyter Notebooks for dataset processing, for Thermonet-like models. The notebook that contains full dataset proicessing pipeline:
+This repository contains Jupyter Notebooks for dataset processing.
 
 - **Dataset_processing.ipynb:** Prepares the dataset (generates mutants, performs standardized orientation and calculates features for OrgNet and Thermonet-like models) for model training. Use .csv files in /datasets/ as as init_df in this notebook. 
 
@@ -52,7 +52,7 @@ Parameters:
 
  ## Voxels calculation
  
-To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models, while calculate_features_for_orgnet.py is used to calculate features for OrgNet models. Tcalculate_features_for_orgnetd.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
+To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models, while calculate_features_for_orgnet.py is used to calculate features for OrgNet models. calculate_features_for_orgnetd.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
 
 Both of them are designed to generate voxel-based feature datasets from two protein structure files — one corresponding to the wildtype protein and the other to its mutant version. 
 
@@ -97,7 +97,7 @@ Its example usage is also included in /Dataset_processing/Dataset_processing.ipy
 
 ## Orientation standardization
 
-To orient the protein structures using orientation standardization use the following script - /orientation_standartization/orient_protein.py. This script is designed to perform a orientation standardization of a protein structure based on a specified mutation site. It parses a PDB file to extract the protein's coordinates and associated data, computes a normalized basis from the protein structure, and then aligns this basis with a predefined reference basis using a rotation transformation. The reoriented coordinates are then saved into a new PDB file with an updated naming convention.
+To orient the protein structures using orientation standardization use the following script - /orientation_standardization/orient_protein.py. This script is designed to perform a orientation standardization of a protein structure based on a specified mutation site. It parses a PDB file to extract the protein's coordinates and associated data, computes a normalized basis from the protein structure, and then aligns this basis with a predefined reference basis using a rotation transformation. The reoriented coordinates are then saved into a new PDB file with an updated naming convention.
 
 Example usage:
 ```bash

@@ -1,13 +1,13 @@
-# OrgNet
-OrgNet is a 3D-CNN model capable of predicting ddG upon single amino acid substitution in pdb structue.
+# ThermoNet-like models
+3D-CNN models capable of predicting ddG upon single amino acid substitution in pdb structue.
 
 ## Installation
 
 You can create an environment from .yml file:
 
 ```bash
-conda env create -f OrgNet_conf.yml
-conda activate OrgNet_conf
+conda env create -f conf.yml
+conda activate thermonet_tf
 ```
 
 All required packages and versions can be found in requirements.txt file.
@@ -16,7 +16,7 @@ GPCRapa was tested on Ubuntu 22.04.5 LTS, AMD® Ryzen 9 7950x 16-core processor 
 
 ## Usage
 
-To look at usage example of OrgNet see Tutorial.ipynb in /Notebooks/
+To look at usage see example.ipynb in /Notebooks/
 
 ## Training
 
@@ -30,7 +30,7 @@ All options:
 usage: Train.py [-h] [- evdirect PATH_TO_EVAL_DATASET_DIRECT_FEATURES] [-evreverse PATH_TO_EVAL_DATASET_REVERSE_FEATURES] [-evds PATH_TO_EVAL_DATASET_CSV] [-trdirect PATH_TO_TRAIN_DATASET_DIRECT_FEATURES] [-trreverse PATH_TO_TRAIN_DATASET_REVERSE_FEATURES] [-trds PATH_TO_TRAIN_DATASET_CSV]
                              [-mod PATH_TO_SAVE_MODELS] [-log PATH_TO_SAVE_LOGS]
 
-Training script for OrgNet.
+Training script:
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -52,7 +52,7 @@ optional arguments:
                         Path to save logs.
 ```
 
-To prepare your dataset for OrgNet use   
+To prepare your dataset
 use custom splitting function to split your data, use gends_2prots_1_TOTAL1.py:
 ```
 gends_2prots_1_TOTAL1.py  -iwt /path_to_wt/ -imut /path_to_mut/ -o /path_to_save/ --boxsize 16 --voxelsize 1
@@ -80,11 +80,11 @@ optional arguments:
 
 ## Inference
 
-To predict the ddG for a set of processed proteins, use the  Inference script.
+To predict the ddG for a set of processed proteins, use the Inference script.
 
-Create the conda environment (remember to change the prefix directory in OrgNet_conf.yml). 
+Create the conda environment (remember to change the prefix directory in conf.yml). 
 ```
-conda env create -f OrgNet_conf.yml
+conda env create -f conf.yml
 ```
 
 After this, activate the env and run the Inference.py script.

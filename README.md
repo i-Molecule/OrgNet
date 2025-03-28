@@ -2,19 +2,20 @@
 
 OrgNet is a 3D-CNN model designed to predict ddG values upon single amino acid substitutions in PDB structures.
 
+## Features
+- **Data Preprocessing**: Scripts for preparing datasets for OrgNet and ThermoNet-like models.
+- **Training**: Training scripts for ThermoNet-like models.
+- **Inference**: Scripts for predicting ddG values using OrgNet and ThermoNet-like models.
+
 ## Repository Structure
-
-The repository is organized into two distinct environments for TensorFlow and PyTorch implementations.
-
-- **`tensorflow/`**: Contains the TensorFlow implementation of ThermoNet-like and OrgNet-like models, including data preprocessing, training, and inference scripts. Refer to the `README.md` inside this folder and `Readme.md` inside its subfolders for detailed instructions.
-- **`pytorch/`**: Contains the PyTorch implementation of OrgNet, focusing on inference. Refer to the `README.md` inside this folder for more details.
+- **`data_preprocessing/`**: TensorFlow implementation for data preprocessing.
+- **`OrgNet/`**: PyTorch implementation of OrgNet for inference.
+- **`ThermoNet-like/`**: TensorFlow implementation of ThermoNet-like models for training and inference.
 
 ## Installation
-
-Each folder (`tensorflow/` and `pytorch/`) includes its own environment configuration file (refer to `.yml` and `.sh`) and setup instructions. Follow the specific instructions in the respective folder's `README.md` to set up the required environment.
+Refer to `README.md` in each folder for environment setup instructions. Note that `data_preprocessing/` and `ThermoNet-like/` share the same environment.
 
 ## Usage
-
-- **Data Preprocessing**: Instructions for preparing datasets are provided in the `tensorflow/` folder.
-- **Training**: Training scripts and guidelines are available in the `tensorflow/` folder.
-- **Inference**: Inference scripts for predicting ddG values are available in both the `tensorflow/` and `pytorch/` folders.
+- **Data Preprocessing**: Instructions for preparing datasets, see `data_preprocessing/README.md`.
+- **Training**: Preprocessing, training scripts, inference and guidelines, see `ThermoNet-like/README.md`.
+- **Inference**: Inference scripts for predicting ddG values are available in both  `OrgNet/` and `ThermoNet-like/`.
