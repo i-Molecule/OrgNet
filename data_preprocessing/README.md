@@ -1,42 +1,69 @@
-# Dataset processing
+# Dataset Processing for OrgNet and ThermoNet-like Models
 
-This repository contains Jupyter Notebooks for dataset processing.
+This repository contains tools and scripts for preparing datasets, generating mutant structures, and calculating features for OrgNet and ThermoNet-like models. The pipeline includes dataset preprocessing, orientation standardization (for OrgNet), and voxel-based feature calculation.
 
-- **Dataset_processing.ipynb:** Prepares the dataset (generates mutants, performs standardized orientation and calculates features for OrgNet and Thermonet-like models) for model training. Use .csv files in /datasets/ as as init_df in this notebook. 
+---
 
+## Overview
 
-## Prerequisites
+- **`Dataset_processing.ipynb`**: Prepares datasets by generating mutants, performing orientation standardization (for OrgNet), and calculating features for OrgNet and ThermoNet-like models.
+- **Input**: `.csv` files located in the `/datasets/` folder.
+- **Output**: Processed datasets ready for model training.
 
-Make sure you have Python 3.10 or later installed. The following packages are required (you may have additional dependencies based on your specific project):
+---
 
-- numpy
-- pandas
-- scikit-learn
-- matplotlib
-- tensorflow 
-- jupyter
-- etc
-
-Full python packages and their version can be found in requirements.txt
+## Setup Instructions
 
 ### Install Rosetta 3.13
-1. Go to https://els2.comotion.uw.edu/product/rosetta to get an academic license for Rosetta.
-2. Download Rosetta 3.13 (source + binaries for Linux) from this site: https://www.rosettacommons.org/software/license-and-download
-3. Extract the tarball to a local directory from which Rosetta binaries can be called by specifying their full path.
-
-### Install HTMD - the main library for voxels calculation
-The free version of HTMD is free to non-commercial users although it does not come with full functionality. But to use it with ThermoNet, the free version is sufficient. You can either install it by following the instructions listed [here](https://software.acellera.com/install-htmd.html), or by running
+1. Obtain an academic license for Rosetta from [here](https://els2.comotion.uw.edu/product/rosetta).
+2. Download Rosetta 3.13 (source + binaries for Linux) from [this link](https://www.rosettacommons.org/software/license-and-download) or run:
 ```bash
-conda env create --file datasets_processing.yml --name tf_preprocessing
+cd ./data_preprocessing
+wget https://downloads.rosettacommons.org/downloads/academic/3.13/rosetta_bin_linux_3.13_bundle.tgz
 ```
-The above command will create a conda environment and install all dependencies so that one can run scripts to make input tensors.
+3. Extract the tarball to a local directory from which Rosetta binaries can be called by specifying their FULL path.
+```bash
+tar -xvzf rosetta_bin_linux_3.13_bundle.tgz
+```
+4. Rename the extracted folder `rosetta_bin_linux_2021.16.61629_bundle` to `rosetta`:
+```bash
+mv rosetta_bin_linux_2021.16.61629_bundle rosetta
+```
+5. Ensure `parallel` is installed:
+```bash
+parallel --version
+```
+If not installed, run:
+```bash
+sudo apt install parallel
+```
 
-## OrgNet datasets
+### Setting Up a Virtual Environment with `conda`
 
-OrgNet dataset .csv files for Ssym, Q1744, Q3214, S669 and S2648 are located in /datasets/ folder. They can be used to create voxel datasets using Dataset_processing.ipynb.
+**Prerequisites:**
+- Anaconda/Miniconda
+
+1. Run the `install.sh` script to create the `preprocessing` environment within `$CONDA_BASE/envs/`:
+```bash
+cd ./data_preprocessing
+bash -l install.sh
+```
+2. Activate the environment and register HTMD (free for non-commercial use):
+```bash
+conda activate preprocessing
+htmd_register
+```
+
+## OrgNet Dataset Preparation
+
+OrgNet dataset `.csv` files for Ssym, Q1744, Q3214, S669 and S2648 are located in `./data_preprocessing/datasets/` folder.
+Use these files as input `.csv` data for `Dataset_processing.ipynb` to create voxel datasets.
+
+## Important Note
+
+Always specify **absolute paths** for all paths and directories.
 
 ## Mutant structures generation
-
 
 To generate mutant structures use run_rosetta_relax function in Dataset_processing.ipynb. 
 
@@ -50,7 +77,7 @@ Parameters:
     - OUTDIR (str): Output directory for Rosetta relax results.
     - ROSETTA_PATH (str): Path to the Rosetta relax binary.
 
- ## Voxels calculation
+## Voxels calculation
  
 To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models, while calculate_features_for_orgnet.py is used to calculate features for OrgNet models. calculate_features_for_orgnetd.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
 
@@ -58,7 +85,7 @@ Both of them are designed to generate voxel-based feature datasets from two prot
 
 Example usage:
 ```bash
-python calculate_features_for_thermonet.py -iwt path/to/wildtype.pdb -imut path/to/mutant.pdb -o path/to/save/output --boxsize --voxelsize -v
+python calculate_features_for_thermonet.py -iwt absolute/path/to/wildtype.pdb -imut absolute/path/to/mutant.pdb -o absolute/path/to/save/output --boxsize --voxelsize -v
 ```
 
 - **-iwt/--input_wildtype_protein: Path to the wildtype PDB file.
@@ -101,7 +128,7 @@ To orient the protein structures using orientation standardization use the follo
 
 Example usage:
 ```bash
-python orient_protein.py -i path/to/input.pdb -o path/to/output_directory -mp mutation_position -fl structure_tag
+python orient_protein.py -i absolute/path/to/input.pdb -o absolute/path/to/output_directory -mp mutation_position -fl structure_tag
 ```
 
 -i/--input_file: Path to the input PDB file.
