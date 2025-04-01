@@ -59,6 +59,8 @@ htmd_register
 OrgNet dataset `.csv` files for Ssym, Q1744, Q3214, S669 and S2648 are located in `./data_preprocessing/datasets/` folder.
 Use these files as input `.csv` data for `Dataset_processing.ipynb` to create voxel datasets.
 
+Note, that because OrgNet and Thermonet-like models use the following notation for destabilizing (ddg>0) and stabilizing (ddg<0) mutations, the signs for S2648 and S669 were changed accordingly. The correct datasets to reproduce OrgNet models are S669_fixed_sign.csv and S2648_fixed_sign.csv. 
+
 ## Important Note
 
 Always specify **absolute paths** for all paths and directories.
