@@ -1,0 +1,20 @@
+{
+"path_to_voxels": "./data/Datasets/OrgNet/train/Q3214/Q3214_X.npy",
+"path_to_values": "./data/Datasets/OrgNet/train/Q3214/Q3214_y.npy",
+"path_to_ind_dir": "./train_res/orgnet/Q3214/ind_dir.npy",
+"path_to_ind_rev": "./train_res/orgnet/Q3214/ind_rev.npy",
+"dir_pt_save": "./train_res/orgnet/Q3214",
+"batch_size": 8,
+"epochs": 100,
+"patience": 60,
+"scheduler_args": {
+    "mode": "min",
+    "factor": 0.9,
+    "patience": 5,
+    "cooldown": 0,
+    "min_lr": 0,
+    "eps": 1e-11
+},
+
+"SEED": 42
+}

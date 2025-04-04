@@ -1,0 +1,44 @@
+{
+"dir_pt_save": "./train_res/orgnet/S2648_V",
+"batch_size": 8,
+"epochs": 100,
+"patience": 15,
+"scheduler_args": {
+    "mode": "min",
+    "factor": 0.5,
+    "patience": 10,
+    "cooldown": 5,
+    "min_lr": 0,
+    "eps": 1e-11
+},
+"k_folds": {
+    "X_test": [
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_0_X_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_1_X_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_2_X_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_3_X_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_4_X_test.npy"
+    ],
+    "X_train": [
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_0_X_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_1_X_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_2_X_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_3_X_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_4_X_train.npy"
+    ],
+    "y_test": [
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_0_y_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_1_y_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_2_y_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_3_y_test.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_4_y_test.npy"
+    ],
+    "y_train": [
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_0_y_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_1_y_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_2_y_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_3_y_train.npy",
+        "./data/Datasets/OrgNet/train/S2648_V/2648_split_4_y_train.npy"
+    ]
+}
+}

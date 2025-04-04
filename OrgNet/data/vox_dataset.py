@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 import torch
@@ -41,10 +43,11 @@ def load_voxels(path_to_voxels, path_to_values):
     return full_voxels, n_samples, n_channels, grid_size, full_values
 
 
-def random_rotation(polycube):
-    def rotations(polycube, i, axes):
-        return torch.rot90(polycube, i, axes)
+def rotations(polycube, i, axes):
+    return torch.rot90(polycube, i, axes)
 
+
+def random_rotation(polycube):
     r = np.random.randint(6)
     rot_degree = np.random.randint(4)
 
@@ -69,9 +72,9 @@ class VoxDataset(Dataset):
         values: np.ndarray,
         n_channels: int,
         grid_size: int,
-        device: str = "cuda",
         cubic_rotations: bool = True,
-        v_dtype=torch.int64,
+        device: str = "cuda",
+        v_dtype=torch.float32,
     ):
         self.voxels = voxels
         self.n_channels = n_channels

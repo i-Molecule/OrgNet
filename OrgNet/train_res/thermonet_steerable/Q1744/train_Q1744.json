@@ -1,0 +1,20 @@
+{
+"model_name": "ThermoNet_steerable",
+"path_to_voxels_dir": "./data/Datasets/ThermoNet-like/train/Q1744_X_direct.npy",
+"path_to_values_dir": "./data/Datasets/ThermoNet-like/train/Q1744_y_direct.npy",
+"path_to_voxels_rev": "./data/Datasets/ThermoNet-like/train/Q1744_X_reverse.npy",
+"path_to_values_rev": "./data/Datasets/ThermoNet-like/train/Q1744_y_reverse.npy",
+"dir_pt_save": "./train_res/thermonet_steerable/Q1744",
+"batch_size": 8,
+"epochs": 200,
+"patience": 10,
+"scheduler_args": {
+    "mode": "min",
+    "factor": 0.5,
+    "patience": 200,
+    "cooldown": 200,
+    "min_lr": 0,
+    "eps": 1e-11
+},
+"SEED": 201
+}

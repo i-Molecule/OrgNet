@@ -1,29 +1,6 @@
 import torch
 import torch.nn as nn
-
-
-def make_norm(channels, norm="bn"):
-    if norm == "bn":
-        return nn.BatchNorm3d(channels)
-    elif norm == "in":
-        return nn.InstanceNorm3d(channels)
-    elif norm == "None" or norm is None:
-        return nn.Identity()
-    else:
-        raise ValueError("Implemented normalization layers: bn, in, None")
-
-
-def make_active(active="relu"):
-    activations = {
-        "relu": nn.ReLU(inplace=True),
-        "leakyrelu": nn.LeakyReLU(inplace=True),
-        "tanh": nn.Tanh(),
-        "gelu": nn.GELU(),
-        "logsigmoid": nn.LogSigmoid(),
-        "sigmoid": nn.Sigmoid(),
-        "None": nn.Identity(),
-    }
-    return activations.get(active, nn.Identity())
+from utils.helpers import make_active, make_norm
 
 
 class ConvNormActive(nn.Module):
