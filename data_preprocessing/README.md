@@ -81,7 +81,7 @@ Parameters:
 
 ## Voxels calculation
  
-To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models, while calculate_features_for_orgnet.py is used to calculate features for OrgNet models. calculate_features_for_orgnetd.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
+To calculate voxels using HTMD library we have used two different scripts, calculate_features_for_thermonet.py and calculate_features_for_orgnet.py. The first script calculate_features_for_thermonet.py is used to calculate features for reproduced Thermonet models using feature_calc_nonori(), while calculate_features_for_orgnet.py is used to calculate features for OrgNet models using feature_calc(). calculate_features_for_orgnet.py provides a GLY correction, for GLY residues to be correctly positioned in the center of voxel grid. 
 
 Both of them are designed to generate voxel-based feature datasets from two protein structure files — one corresponding to the wildtype protein and the other to its mutant version. 
 
