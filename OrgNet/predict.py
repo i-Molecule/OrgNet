@@ -20,6 +20,8 @@ def call_predict(
     training_data: Literal["Q3214", "S2648_V"] = "S2648_V",
     paths_to_kth_model: Optional[list] = None,
     model_name: Literal["OrgNet", "ThermoNet", "ThermoNet_steerable"] = "OrgNet",
+    random_rotations: Optional[bool] = None,
+    fully_rotated: bool = False,
 ) -> list:
     """
     Predicts using the OrgNet model with optional rotation augmentation.
@@ -32,6 +34,8 @@ def call_predict(
         training_data (Literal["Q3214", "S2648_V"]): Training data identifier.
         paths_to_kth_model (Optional[list]): List of paths to model weights.
         model_name (Literal["OrgNet", "ThermoNet", "ThermoNet_steerable"]): Model identifier.
+        random_rotations (Optional[bool]): Whether to apply random rotations to voxels during inference.
+        fully_rotated (bool): Whether to use all 24 rotations for prediction.
 
     Returns:
         list: List containing metric values (RootMeanSquaredError, PearsonCorrCoef, MeanAbsoluteError).
@@ -48,64 +52,126 @@ def call_predict(
     )
     device = torch.device(device)
 
-    if model_name == "OrgNet":
-        cubic_rotations = True
-    else:
-        cubic_rotations = False
-
-    test_dataset = VoxDataset(
-        voxels=full_voxels,
-        values=np.arange(n_samples),
-        n_channels=n_channels,
-        grid_size=grid_size,
-        device=device,
-        cubic_rotations=cubic_rotations,
-        v_dtype=torch.int64,
-    )
-
-    testloader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=128, shuffle=False, num_workers=0
-    )
-
-    fold_predicts = []
-
     if paths_to_kth_model is None:
         paths_to_kth_model = [
             osp.join("models", "weights", "orgnet", training_data, f"{k}.pt")
             for k in range(5)
         ]
 
-    for k, path_to_kth_model in enumerate(paths_to_kth_model):
-        if paths_to_kth_model is None:
-            net = OrgNet()
-        else:
+    if fully_rotated:
+        all_predictions = np.zeros((n_samples, 24, 5))
+        fold_mean_predictions = np.zeros((n_samples, 5))
+        fold_std_rotations = np.zeros((n_samples, 5))
+
+        for rotation_index in range(24):
+            test_dataset = VoxDataset(
+                voxels=full_voxels,
+                values=np.array(range(n_samples)),
+                n_channels=n_channels,
+                grid_size=grid_size,
+                rotation_index=rotation_index,
+                device=device,
+                v_dtype=torch.int64
+            )
+
+            testloader = torch.utils.data.DataLoader(
+                test_dataset, batch_size=128, shuffle=False, num_workers=0
+            )
+
+            for k, path_to_kth_model in enumerate(paths_to_kth_model):
+                if paths_to_kth_model is None:
+                    net = OrgNet()
+                else:
+                    if model_name == "OrgNet":
+                        net = OrgNet()
+                    elif model_name == "ThermoNet":
+                        net = ThermoNet(se3conv=False)
+                    elif model_name == "ThermoNet_steerable":
+                        net = ThermoNet(se3conv=True, device=device)
+
+                net.to(device)
+                net.load_state_dict(torch.load(path_to_kth_model, map_location=device))
+                net.eval()
+
+                preds_df = get_predictions(net, testloader=testloader, device=device)
+                preds_df.rename(columns={"preds": str(k)}, inplace=True)
+
+                all_predictions[:, rotation_index, k] = preds_df[str(k)].values
+
+        for k in range(5):
+            fold_mean_predictions[:, k] = np.mean(all_predictions[:, :, k], axis=1)
+            fold_std_rotations[:, k] = np.std(all_predictions[:, :, k], axis=1)
+
+        mean_predictions = np.mean(fold_mean_predictions, axis=1)
+        std_predictions_folds = np.std(fold_mean_predictions, axis=1)
+
+        gt = pd.DataFrame(
+            {
+                "id": np.arange(n_samples),
+                "target": full_values,
+                "mean_predictions": mean_predictions,
+                "std_predictions_folds": std_predictions_folds,
+            }
+        )
+
+        # for k in range(5):
+        #     gt[f"fold_{k}_mean_predictions"] = fold_mean_predictions[:, k]
+        #     gt[f"fold_{k}_std_rotations"] = fold_std_rotations[:, k]
+
+    else:
+        if random_rotations is None: # default
             if model_name == "OrgNet":
+                random_rotations = True
+            else:
+                random_rotations = False
+        
+        test_dataset = VoxDataset(
+            voxels=full_voxels,
+            values=np.arange(n_samples),
+            n_channels=n_channels,
+            grid_size=grid_size,
+            device=device,
+            cubic_rotations=random_rotations,
+            v_dtype=torch.int64,
+        )
+
+        testloader = torch.utils.data.DataLoader(
+            test_dataset, batch_size=128, shuffle=False, num_workers=0
+        )
+
+        fold_predicts = []
+
+        for k, path_to_kth_model in enumerate(paths_to_kth_model):
+            if paths_to_kth_model is None:
                 net = OrgNet()
-            elif model_name == "ThermoNet":
-                net = ThermoNet(se3conv=False)
-            elif model_name == "ThermoNet_steerable":
-                net = ThermoNet(se3conv=True, device=device)
+            else:
+                if model_name == "OrgNet":
+                    net = OrgNet()
+                elif model_name == "ThermoNet":
+                    net = ThermoNet(se3conv=False)
+                elif model_name == "ThermoNet_steerable":
+                    net = ThermoNet(se3conv=True, device=device)
 
-        net.to(device)
-        net.load_state_dict(torch.load(path_to_kth_model, map_location=device))
-        net.eval()
+            net.to(device)
+            net.load_state_dict(torch.load(path_to_kth_model, map_location=device))
+            net.eval()
 
-        preds_df = get_predictions(net, testloader=testloader, device=device)
-        preds_df.rename(columns={"preds": str(k)}, inplace=True)
+            preds_df = get_predictions(net, testloader=testloader, device=device)
+            preds_df.rename(columns={"preds": str(k)}, inplace=True)
 
-        fold_predicts.append(preds_df[str(k)].values)
+            fold_predicts.append(preds_df[str(k)].values)
 
-    mean_predictions = np.mean(fold_predicts, axis=0)
-    std_predictions_folds = np.std(fold_predicts, axis=0)
+        mean_predictions = np.mean(fold_predicts, axis=0)
+        std_predictions_folds = np.std(fold_predicts, axis=0)
 
-    gt = pd.DataFrame(
-        {
-            "id": np.arange(n_samples),
-            "target": full_values,
-            "mean_predictions": mean_predictions,
-            "std_predictions_folds": std_predictions_folds,
-        }
-    )
+        gt = pd.DataFrame(
+            {
+                "id": np.arange(n_samples),
+                "target": full_values,
+                "mean_predictions": mean_predictions,
+                "std_predictions_folds": std_predictions_folds,
+            }
+        )
 
     metric_values = []
 
@@ -159,6 +225,17 @@ def _parse_args(args: Optional[str] = None):
         help="Weights for OrgNet trained on (`Q3214` or `S2648_V`)",
         default="S2648_V",
     )
+    parser.add_argument(
+        "--random_rotations",
+        type=lambda x: x.lower() == "true",
+        help="Enable or disable random rotations (true/false). Default is None.",
+        default=None,
+    )
+    parser.add_argument(
+        "--fully_rotated",
+        action="store_true",
+        help="Enable fully rotated mode (default: False)",
+    )
     return parser.parse_args(args=args)
 
 
@@ -183,6 +260,8 @@ def main(args: Optional[str] = None):
         training_data=args.trained_on,
         paths_to_kth_model=pt_files,
         model_name=args.model_name,
+        random_rotations=args.random_rotations,
+        fully_rotated=args.fully_rotated
     )
     print("  r  | RMSE | MAE")
     print(

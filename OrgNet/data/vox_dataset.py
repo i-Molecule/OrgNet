@@ -47,10 +47,7 @@ def rotations(polycube, i, axes):
     return torch.rot90(polycube, i, axes)
 
 
-def random_rotation(polycube):
-    r = np.random.randint(6)
-    rot_degree = np.random.randint(4)
-
+def call_rotations(polycube, r, rot_degree):
     if r == 0:
         return rotations(polycube, rot_degree, (2, 3))
     elif r == 1:
@@ -65,6 +62,20 @@ def random_rotation(polycube):
         return rotations(torch.rot90(polycube, -1, (1, 2)), rot_degree, (1, 3))
 
 
+def random_rotation(polycube):
+    r = np.random.randint(6)
+    rot_degree = np.random.randint(4)
+
+    return call_rotations(polycube, r, rot_degree)
+
+
+def specific_rotation(polycube, rotation_index):
+    r = rotation_index // 4
+    rot_degree = rotation_index % 4
+
+    return call_rotations(polycube, r, rot_degree)
+
+
 class VoxDataset(Dataset):
     def __init__(
         self,
@@ -73,6 +84,7 @@ class VoxDataset(Dataset):
         n_channels: int,
         grid_size: int,
         cubic_rotations: bool = True,
+        rotation_index: Optional[int] = None,
         device: str = "cuda",
         v_dtype=torch.float32,
     ):
@@ -80,6 +92,7 @@ class VoxDataset(Dataset):
         self.n_channels = n_channels
         self.grid_size = grid_size
         self.cubic_rotations = cubic_rotations
+        self.rotation_index = rotation_index
 
         if device == "cuda":
             self.device = torch.device("cuda")
@@ -109,7 +122,10 @@ class VoxDataset(Dataset):
         voxel = torch.from_numpy(self.voxels[i, :, :, :, :])
 
         if self.cubic_rotations:
-            voxel = random_rotation(voxel)
+            if self.rotation_index is not None:
+                voxel = specific_rotation(voxel, self.rotation_index)
+            else:
+                voxel = random_rotation(voxel)
 
         return (
             voxel.to(dtype=torch.float32, device=self.device),
