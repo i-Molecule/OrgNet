@@ -94,12 +94,17 @@ def restore_pdb(file_name, coords, out_dir, flag):
     return out_dir+f"{new_f_name}_{flag}_oriented.pdb"
 
 def get_Cn_1_coords(coords_dict, pos):
-    res_num = int(pos) -1
+    res_num = int(pos) - 1
+    res = None
     for item in coords_dict.keys():
         if int(item[1]) == int(res_num):
             res = item
-    #print(coords_dict[res])
-    return coords_dict[res]["C"]
+    if res is None:
+        print("Cannot get C for 0 res")
+        return list(coords_dict.values())[0]["C"]
+    else:
+        #print(coords_dict[res])
+        return coords_dict[res]["C"]
 
 def get_Calphan_coords(coords_dict, pos):
     res_num = pos

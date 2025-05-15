@@ -11,10 +11,12 @@ from models.orgnet import OrgNet
 from models.thermonet import ThermoNet
 from utils.helpers import get_predictions, get_pt_files, metric_by_name, seeds
 
+folder = os.path.dirname(__file__)
+
 
 def call_predict(
     path_to_X: Union[str, os.PathLike],
-    path_to_y: Union[str, os.PathLike],
+    path_to_y: Optional[Union[str, os.PathLike]] = None,
     save_to: Optional[Union[str, os.PathLike]] = None,
     device: Literal["cuda", "cpu"] = "cpu",
     training_data: Literal["Q3214", "S2648_V"] = "S2648_V",
@@ -22,6 +24,7 @@ def call_predict(
     model_name: Literal["OrgNet", "ThermoNet", "ThermoNet_steerable"] = "OrgNet",
     random_rotations: Optional[bool] = None,
     fully_rotated: bool = False,
+    **kwargs,
 ) -> list:
     """
     Predicts using the OrgNet model with optional rotation augmentation.
@@ -48,13 +51,12 @@ def call_predict(
     torch.backends.cudnn.deterministic = True
 
     full_voxels, n_samples, n_channels, grid_size, full_values = load_voxels(
-        path_to_X, path_to_y
-    )
+        path_to_X, path_to_y, **kwargs)
     device = torch.device(device)
 
     if paths_to_kth_model is None:
         paths_to_kth_model = [
-            osp.join("models", "weights", "orgnet", training_data, f"{k}.pt")
+            osp.join(folder, "models", "weights", "orgnet", training_data, f"{k}.pt")
             for k in range(5)
         ]
 
@@ -105,14 +107,14 @@ def call_predict(
         mean_predictions = np.mean(fold_mean_predictions, axis=1)
         std_predictions_folds = np.std(fold_mean_predictions, axis=1)
 
-        gt = pd.DataFrame(
-            {
-                "id": np.arange(n_samples),
-                "target": full_values,
-                "mean_predictions": mean_predictions,
-                "std_predictions_folds": std_predictions_folds,
-            }
-        )
+        gt = {
+            "id": np.arange(n_samples),
+            "mean_predictions": mean_predictions,
+            "std_predictions_folds": std_predictions_folds,
+        }
+        if full_values is not None:
+            gt["target"] = full_values
+        gt = pd.DataFrame(gt)
 
         # for k in range(5):
         #     gt[f"fold_{k}_mean_predictions"] = fold_mean_predictions[:, k]
@@ -164,26 +166,28 @@ def call_predict(
         mean_predictions = np.mean(fold_predicts, axis=0)
         std_predictions_folds = np.std(fold_predicts, axis=0)
 
-        gt = pd.DataFrame(
-            {
-                "id": np.arange(n_samples),
-                "target": full_values,
-                "mean_predictions": mean_predictions,
-                "std_predictions_folds": std_predictions_folds,
-            }
-        )
+        gt = {
+            "id": np.arange(n_samples),
+            "mean_predictions": mean_predictions,
+            "std_predictions_folds": std_predictions_folds,
+        }
+        if full_values is not None:
+            gt["target"] = full_values
+        gt = pd.DataFrame(gt)
 
-    metric_values = []
-
-    for metric_name in ["RootMeanSquaredError", "PearsonCorrCoef", "MeanAbsoluteError"]:
-        metric = metric_by_name(metric_name=metric_name, device="cpu")
-        metric.reset()
-        metric.update(
-            torch.tensor(gt.mean_predictions.values),
-            torch.tensor(gt["target"].values),
-        )
-        metric_value = metric.compute()
-        metric_values.append(metric_value.cpu().numpy())
+    if full_values is None:
+        metric_values = None
+    else:
+        metric_values = []
+        for metric_name in ["RootMeanSquaredError", "PearsonCorrCoef", "MeanAbsoluteError"]:
+            metric = metric_by_name(metric_name=metric_name, device="cpu")
+            metric.reset()
+            metric.update(
+                torch.tensor(gt.mean_predictions.values),
+                torch.tensor(gt["target"].values),
+            )
+            metric_value = metric.compute()
+            metric_values.append(metric_value.cpu().numpy())
 
     if save_to:
         gt.to_csv(save_to, index=False)
@@ -197,7 +201,7 @@ def _parse_args(args: Optional[str] = None):
         "-X", "--path_to_X", required=True, help="Path to .npy file with voxels"
     )
     parser.add_argument(
-        "-y", "--path_to_y", required=True, help="Path to .npy file with values"
+        "-y", "--path_to_y", required=False, help="Path to .npy file with values"
     )
     parser.add_argument(
         "--model_name",
@@ -252,7 +256,7 @@ def main(args: Optional[str] = None):
     else:
         pt_files = None
 
-    RMSE_, pearsonr_, mae_ = call_predict(
+    metric_values = call_predict(
         args.path_to_X,
         args.path_to_y,
         save_to=args.save_to,
@@ -263,14 +267,16 @@ def main(args: Optional[str] = None):
         random_rotations=args.random_rotations,
         fully_rotated=args.fully_rotated
     )
-    print("  r  | RMSE | MAE")
-    print(
-        "%.2f" % round(pearsonr_.item(), 2),
-        "|",
-        "%.2f" % round(RMSE_.item(), 2),
-        "|",
-        "%.2f" % round(mae_.item(), 2),
-    )
+    if metric_values is not None:
+        RMSE_, pearsonr_, mae_ = metric_values
+        print("  r  | RMSE | MAE")
+        print(
+            "%.2f" % round(pearsonr_.item(), 2),
+            "|",
+            "%.2f" % round(RMSE_.item(), 2),
+            "|",
+            "%.2f" % round(mae_.item(), 2),
+        )
 
 
 if __name__ == "__main__":

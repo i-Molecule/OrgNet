@@ -6,7 +6,11 @@ import torch
 from torch.utils.data import Dataset
 
 
-def reshape_voxels_array(voxels):
+def reshape_voxels_array(
+        voxels: np.ndarray,
+        samples_dim : Optional[int] = None,
+        channels_dim : Optional[int] = None,
+        ):
     assert len(voxels.shape) == 5
 
     u, c = np.unique(voxels.shape, return_counts=True)
@@ -14,18 +18,27 @@ def reshape_voxels_array(voxels):
     assert set(c) == set([1, 3])
     assert (np.sort(c) == np.array([1, 1, 3])).all()
 
-    grid_size_indices = list(
-        np.where(pd.Series(voxels.shape).duplicated(keep=False))[0]
-    )
+    if samples_dim is None:
+        samples_dim = [np.argmax(voxels.shape)]
+    else:
+        if isinstance(samples_dim, int):
+            samples_dim = [samples_dim]
 
-    samples_dim = [np.argmax(voxels.shape)]
-    n_samples = max(voxels.shape)
-
-    channels_dim = list(
-        set(range(len(voxels.shape))) - set(grid_size_indices) - set(samples_dim)
-    )
+    if channels_dim is None:
+        grid_size_indices = list(
+            np.where(pd.Series(voxels.shape).duplicated(keep=False))[0]
+        )
+        channels_dim = list(
+            set(range(len(voxels.shape))) - set(grid_size_indices) - set(samples_dim)
+        )
+    else:
+        if isinstance(channels_dim, int):
+            channels_dim = [channels_dim]
+        grid_size_indices = [i for i in range(voxels.ndim) 
+            if i not in samples_dim+channels_dim]
+    
+    n_samples = voxels.shape[samples_dim[0]]
     n_channels = voxels.shape[channels_dim[0]]
-
     grid_size = voxels.shape[grid_size_indices[0]]
 
     voxels = np.transpose(voxels, tuple(samples_dim + channels_dim + grid_size_indices))
@@ -33,12 +46,14 @@ def reshape_voxels_array(voxels):
     return voxels, n_samples, n_channels, grid_size
 
 
-def load_voxels(path_to_voxels, path_to_values):
+def load_voxels(path_to_voxels, path_to_values, **kwargs):
     full_voxels, n_samples, n_channels, grid_size = reshape_voxels_array(
-        np.load(path_to_voxels)
-    )
+        np.load(path_to_voxels), **kwargs)
 
-    full_values = np.load(path_to_values)
+    if path_to_values is None:
+        full_values = None
+    else:
+        full_values = np.load(path_to_values)
 
     return full_voxels, n_samples, n_channels, grid_size, full_values
 

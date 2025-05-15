@@ -97,9 +97,8 @@ def predict_step(data, device, net):
     output = net(input)
     mol_id = mol_id.unsqueeze(1)
     if mol_id.shape == output.shape:
-        return np.squeeze(output.cpu().numpy()).tolist(), np.squeeze(
-            mol_id.cpu().numpy()
-        ).tolist()
+        return np.squeeze(output.cpu().numpy(), axis=1).tolist(), \
+            np.squeeze(mol_id.cpu().numpy(), axis=1).tolist()
     else:
         raise ValueError(
             f"Shapes of mol_id and output do not match: {mol_id.shape} vs {output.shape}"
