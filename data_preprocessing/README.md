@@ -70,14 +70,14 @@ Always specify **absolute paths** for all paths and directories.
 To generate mutant structures use run_rosetta_relax function in Dataset_processing.ipynb. 
 
 Parameters:
-    - pdb_id (str): PDB identifier.
-    - wt (str): Wild-type amino acid.
-    - mut (str): Mutant amino acid.
-    - pos (str or int): Position of the mutation.
-    - path_to_relaxed_chains (str): Directory with relaxed chain files.
-    - PDBDIR (str): Not used directly here, but expected for input structure directory.
-    - OUTDIR (str): Output directory for Rosetta relax results.
-    - ROSETTA_PATH (str): Path to the Rosetta relax binary.
+- pdb_id (str): PDB identifier.
+- wt (str): Wild-type amino acid.
+- mut (str): Mutant amino acid.
+- pos (str or int): Position of the mutation.
+- path_to_relaxed_chains (str): Directory with relaxed chain files.
+- PDBDIR (str): Not used directly here, but expected for input structure directory.
+- OUTDIR (str): Output directory for Rosetta relax results.
+- ROSETTA_PATH (str): Path to the Rosetta relax binary.
 
 ## Voxels calculation
  
