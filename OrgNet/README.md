@@ -206,3 +206,23 @@ Run inference:
 ```bash
 python predict.py -X data/Datasets/ThermoNet-like/test/Ssym_X_direct.npy -y data/Datasets/ThermoNet-like/test/Ssym_y_direct.npy --model_name ThermoNet_steerable --model_weights_dir train_res/thermonet_steerable/Q3214 --device cuda
 ```
+
+
+# OrgNet+
+
+## Running OrgNet+ Inference
+
+Activate the `orgnet` environment and run the inference script:
+```bash
+conda activate orgnet
+
+python predict.py -X /path/to/X.npy -y /path/to/y.npy --model_name OrgNetPlus --model_weights_dir ./models/weights/orgnetplus --random_rotations false --device cpu --save_to /path/to/predictions.csv
+```
+
+### Required Arguments:
+- `-X`: Path to the `.npy` file containing voxels.
+- `-y`: Path to the `.npy` file containing values.
+
+### Optional Arguments:
+- `--save_to`: Path to save predictions as a `.csv` file. If not provided, predictions are not saved.
+- `--device`: Device to run inference (`cpu` or `cuda`). Default is `cpu`.

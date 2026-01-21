@@ -21,7 +21,7 @@ def call_predict(
     device: Literal["cuda", "cpu"] = "cpu",
     training_data: Literal["Q3214", "S2648_V"] = "S2648_V",
     paths_to_kth_model: Optional[list] = None,
-    model_name: Literal["OrgNet", "ThermoNet", "ThermoNet_steerable"] = "OrgNet",
+    model_name: Literal["OrgNet", "OrgNetPlus", "ThermoNet", "ThermoNet_steerable"] = "OrgNet",
     random_rotations: Optional[bool] = None,
     fully_rotated: bool = False,
     **kwargs,
@@ -36,7 +36,7 @@ def call_predict(
         device (Literal["cuda", "cpu"]): Device to run the model on.
         training_data (Literal["Q3214", "S2648_V"]): Training data identifier.
         paths_to_kth_model (Optional[list]): List of paths to model weights.
-        model_name (Literal["OrgNet", "ThermoNet", "ThermoNet_steerable"]): Model identifier.
+        model_name (Literal["OrgNet", "OrgNetPlus", "ThermoNet", "ThermoNet_steerable"]): Model identifier.
         random_rotations (Optional[bool]): Whether to apply random rotations to voxels during inference.
         fully_rotated (bool): Whether to use all 24 rotations for prediction.
 
@@ -86,6 +86,17 @@ def call_predict(
                 else:
                     if model_name == "OrgNet":
                         net = OrgNet()
+                    elif model_name == "OrgNetPlus":
+                        net = OrgNet(
+                                norm="None",
+                                encoder_act_fn="relu",
+                                head_dropout_prob=0.0,
+                                head_act_fn="gelu",
+                                n_types=14,
+                                grid_size=16,
+                                encoder_config=[16, 80, 400, 512],
+                                head_config=[128, 32],  # derived from head_first_layer_size & mult
+                            )
                     elif model_name == "ThermoNet":
                         net = ThermoNet(se3conv=False)
                     elif model_name == "ThermoNet_steerable":
@@ -149,6 +160,17 @@ def call_predict(
             else:
                 if model_name == "OrgNet":
                     net = OrgNet()
+                elif model_name == "OrgNetPlus":
+                    net = OrgNet(
+                            norm="None",
+                            encoder_act_fn="relu",
+                            head_dropout_prob=0.0,
+                            head_act_fn="gelu",
+                            n_types=14,
+                            grid_size=16,
+                            encoder_config=[16, 80, 400, 512],
+                            head_config=[128, 32],  # derived from head_first_layer_size & mult
+                        )
                 elif model_name == "ThermoNet":
                     net = ThermoNet(se3conv=False)
                 elif model_name == "ThermoNet_steerable":
@@ -190,7 +212,12 @@ def call_predict(
             metric_values.append(metric_value.cpu().numpy())
 
     if save_to:
-        gt.to_csv(save_to, index=False)
+        if model_name == "OrgNetPlus":
+            gt["target"] = (-1)*gt["target"]  # for consistent sign convention
+            gt["prediction"] = (-1)*gt["mean_predictions"]  # for consistent sign convention
+        else:
+            gt.rename(columns={"mean_predictions": "prediction"}, inplace=True)
+        gt[["id","target","prediction"]].to_csv(save_to, index=False)
 
     return metric_values
 
@@ -205,8 +232,8 @@ def _parse_args(args: Optional[str] = None):
     )
     parser.add_argument(
         "--model_name",
-        choices=["OrgNet", "ThermoNet", "ThermoNet_steerable"],
-        help="Model architecture (`ThermoNet`, `ThermoNet_steerable` or `OrgNet`)",
+        choices=["OrgNet", "OrgNetPlus", "ThermoNet", "ThermoNet_steerable"],
+        help="Model architecture (`ThermoNet`, `ThermoNet_steerable`, `OrgNet` or `OrgNetPlus`)",
         default="OrgNet",
     )
     parser.add_argument(

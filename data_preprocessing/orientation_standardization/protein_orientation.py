@@ -93,17 +93,18 @@ def restore_pdb(file_name, coords, out_dir, flag):
 
     return out_dir+f"{new_f_name}_{flag}_oriented.pdb"
 
+# orienting at 1st residue
+def get_C1_coords(coords_dict, pos):
+    res = next((item for item in coords_dict.keys() if item[1] == int(pos)), None)
+    return coords_dict[res]["C"]
+
+# orienting at 1st residue
 def get_Cn_1_coords(coords_dict, pos):
-    res_num = int(pos) - 1
-    res = None
-    for item in coords_dict.keys():
-        if int(item[1]) == int(res_num):
-            res = item
+    res_num = int(pos) -1
+    res = next((item for item in coords_dict.keys() if item[1] == res_num), None)
     if res is None:
-        print("Cannot get C for 0 res")
-        return list(coords_dict.values())[0]["C"]
+        return None
     else:
-        #print(coords_dict[res])
         return coords_dict[res]["C"]
 
 def get_Calphan_coords(coords_dict, pos):
@@ -111,7 +112,6 @@ def get_Calphan_coords(coords_dict, pos):
     for item in coords_dict.keys():
         if int(item[1]) == int(res_num):
             res = item
-    #print(coords_dict[res])
     return coords_dict[res]["CA"]
 
 def get_Nn_coords(coords_dict, pos):
@@ -119,7 +119,6 @@ def get_Nn_coords(coords_dict, pos):
     for item in coords_dict.keys():
         if int(item[1]) == int(res_num):
             res = item
-    #print(coords_dict[res])
     return coords_dict[res]["N"]
     
 def get_Nn_coords_after_transf(coords, coords_dict, pos):
@@ -138,9 +137,14 @@ def check_vector_dir(vector, vector_x):
         return False
 
 def get_protein_basis(coords_dict, pos):
-    
-    vector_x = get_Nn_coords(coords_dict, pos) - get_Cn_1_coords(coords_dict, pos)
-    
+
+    # orienting at 1st residue
+    Cn_1_coords = get_Cn_1_coords(coords_dict, pos)
+
+    if Cn_1_coords is None:
+        vector_x = get_C1_coords(coords_dict, pos) - get_Calphan_coords(coords_dict, pos)
+    else:
+        vector_x = get_Nn_coords(coords_dict, pos) - Cn_1_coords
     
     vector_l = get_Calphan_coords(coords_dict, pos) - get_Nn_coords(coords_dict, pos)
     
