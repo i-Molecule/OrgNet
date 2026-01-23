@@ -3,21 +3,22 @@
 OrgNet is a 3D-CNN model designed to predict ddG values upon single amino acid substitutions in PDB structures.
 
 ## Features
-- **Data Preprocessing**: Scripts for preparing datasets for OrgNet and ThermoNet-like models.
+- **Data Preprocessing**: Scripts for preparing datasets for OrgNet, OrgNet+, and ThermoNet-like models.
 - **Training**: Training scripts for OrgNet and ThermoNet-like models.
-- **Inference**: Scripts for predicting ddG values using OrgNet and ThermoNet-like models.
+- **Inference**: Scripts for predicting ddG values using OrgNet, OrgNet+, and ThermoNet-like models.
 
 ## Repository Structure
 - **`data_preprocessing/`**: Contains data preprocessing scripts and the main data processing notebook: `Dataset_processing.ipynb`.
-- **`OrgNet/`**: PyTorch implementation of OrgNet for training and inference. PyTorch implementation of ThermoNet-like models (including steerable) for training and inference.
+- **`OrgNet/`**: PyTorch implementation of OrgNet and OrgNet+ for training and inference. PyTorch implementation of ThermoNet-like models (including steerable) for training and inference.
 - **`ThermoNet-like/`**: TensorFlow implementation of ThermoNet-like models for training and inference.
 
 ## Installation
 Refer to the `README.md` file in each folder for detailed environment setup instructions.
 
 ## Usage
-- **Data Preprocessing**: Use `data_preprocessing/Dataset_processing.ipynb` notebook to prepare datasets for OrgNet and ThermoNet-like models. See `data_preprocessing/README.md` for details.
+- **Data Preprocessing**: Use `data_preprocessing/Dataset_processing.ipynb` notebook to prepare datasets for OrgNet, OrgNet+, and ThermoNet-like models. See `data_preprocessing/README.md` for details.
 - **Inference**:
+  - For OrgNet+: Use the inference scripts as described in `Running OrgNet+ Inference` section within `OrgNet/README.md`.
   - For OrgNet: Use the inference scripts as described in `Running OrgNet Inference` section within `OrgNet/README.md`.
   - For ThermoNet-like models: 
     - For steerable and augmented versions, see section `Running ThermoNet-like Models Inference` in `OrgNet/README.md`.

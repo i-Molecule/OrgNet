@@ -226,3 +226,14 @@ python predict.py -X /path/to/X.npy -y /path/to/y.npy --model_name OrgNetPlus --
 ### Optional Arguments:
 - `--save_to`: Path to save predictions as a `.csv` file. If not provided, predictions are not saved.
 - `--device`: Device to run inference (`cpu` or `cuda`). Default is `cpu`.
+
+### Example Commands:
+#### Consider 1IV7B (A173C, F189C, L162C) from S461 original benchmark
+
+```bash
+python predict.py -X ./data/test_data/S461_1IV7B_X_direct.npy -y ./data/test_data/S461_1IV7B_y_direct.npy --model_name OrgNetPlus --model_weights_dir ./models/weights/orgnetplus --random_rotations false --device cuda --save_to ./data/test_data/predictions_direct.csv
+```
+
+```bash
+python predict.py -X ./data/test_data/S461_1IV7B_X_reverse.npy -y ./data/test_data/S461_1IV7B_y_reverse.npy --model_name OrgNetPlus --model_weights_dir ./models/weights/orgnetplus --random_rotations false --device cuda --save_to ./data/test_data/predictions_reverse.csv
+```

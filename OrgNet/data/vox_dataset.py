@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 def reshape_voxels_array(
         voxels: np.ndarray,
-        samples_dim : Optional[int] = None,
+        samples_dim : Optional[int] = 0,
         channels_dim : Optional[int] = None,
         ):
     assert len(voxels.shape) == 5
