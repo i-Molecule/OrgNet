@@ -1,3 +1,5 @@
+[![License: PolyForm-Noncommercial-1.0.0](https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-orange.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0)
+
 # OrgNet
 
 OrgNet is a 3D-CNN model designed to predict ddG values upon single amino acid substitutions in PDB structures.
@@ -28,3 +30,11 @@ Refer to the `README.md` file in each folder for detailed environment setup inst
   - For ThermoNet-like models: 
     - For steerable and augmented versions, see section `Training ThermoNet-like Models` in `OrgNet/README.md`.
     - For other cases, use the inference workflow in `ThermoNet-like/Thermonet_like_models_training.ipynb`.
+   
+---
+
+## 📄 License
+
+This project is available under the PolyForm Noncommercial license. 
+
+For commercial use, collaboration, or to request an alternative license, please contact [Petr Popov](mailto:popov.petrus@gmail.com).
